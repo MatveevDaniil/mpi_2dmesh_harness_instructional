@@ -151,6 +151,11 @@ computeMeshDecomposition(AppState *as, vector < vector < Tile2D > > *tileArray) 
          int width =  as->global_mesh_size[0];
          int height = ylocs[i+1]-ylocs[i];
          Tile2D t = Tile2D(0, ylocs[i], width, height, i);
+         t.ghost_xmin = 0;
+         t.ghost_xmax = 0;
+         t.ghost_ymin = (i == 0) ? 0 : 1;
+         t.ghost_ymax = (i == ytiles - 1) ? 0 : 1;
+         t.applyGhostCellUpdates();
          tiles.push_back(t);
          tileArray->push_back(tiles);
       }
@@ -178,6 +183,11 @@ computeMeshDecomposition(AppState *as, vector < vector < Tile2D > > *tileArray) 
          int width =  xlocs[i+1]-xlocs[i];
          int height = as->global_mesh_size[1];
          Tile2D t = Tile2D(xlocs[i], 0, width, height, i);
+         t.ghost_xmin = (i == 0) ? 0 : 1;
+         t.ghost_xmax = (i == xtiles - 1) ? 0 : 1;
+         t.ghost_ymin = 0;
+         t.ghost_ymax = 0;
+         t.applyGhostCellUpdates();
          tile_row.push_back(t);
       }
       tileArray->push_back(tile_row);
@@ -222,6 +232,11 @@ computeMeshDecomposition(AppState *as, vector < vector < Tile2D > > *tileArray) 
             width = xlocs[i+1]-xlocs[i];
             height = ylocs[j+1]-ylocs[j];
             Tile2D t = Tile2D(xlocs[i], ylocs[j], width, height, rank++);
+            t.ghost_xmin = (i == 0) ? 0 : 1;
+            t.ghost_xmax = (i == xtiles - 1) ? 0 : 1;
+            t.ghost_ymin = (j == 0) ? 0 : 1;
+            t.ghost_ymax = (j == ytiles - 1) ? 0 : 1; 
+            t.applyGhostCellUpdates();
             tile_row.push_back(t);
          }
          tileArray->push_back(tile_row);
@@ -378,9 +393,7 @@ sendStridedBuffer(float *srcBuf,
       int fromRank, int toRank ) 
 {
     int msgTag = 0;
-
     std::vector<float> tempBuf(sendWidth * sendHeight);
-
     for (int row = 0; row < sendHeight; ++row) {
         std::memcpy(&tempBuf[row * sendWidth], 
                     &srcBuf[(srcOffsetRow + row) * srcWidth + srcOffsetColumn],
@@ -401,14 +414,11 @@ recvStridedBuffer(float *dstBuf,
     int recvSize[2];
     MPI_Status stat;
 
-
     std::vector<float> tempBuf(expectedWidth * expectedHeight);
     MPI_Recv(tempBuf.data(), expectedWidth * expectedHeight, MPI_FLOAT, fromRank, msgTag, MPI_COMM_WORLD, &stat);
-    for (int row = 0; row < expectedHeight; ++row) {
-        std::memcpy(&dstBuf[(dstOffsetRow + row) * dstWidth + dstOffsetColumn],
-                    &tempBuf[row * expectedWidth],
-                    expectedWidth * sizeof(float));
-    }
+    for (int row = 0; row < expectedHeight; ++row)
+      for (int col = 0; col < expectedWidth; ++col)
+        dstBuf[(dstOffsetRow + row) * dstWidth + dstOffsetColumn + col] += tempBuf[row * expectedWidth + col];
 }
 
 
@@ -452,34 +462,21 @@ sobelAllTiles(int myrank, vector < vector < Tile2D > > & tileArray) {
          //   std::copy(t->inputBuffer.begin(), t->inputBuffer.end(), t->outputBuffer.begin());
 #endif
             t->outputBuffer.resize(t->inputBuffer.size());
+            for (int i = 0; i < t->outputBuffer.size(); i++)
+              t->outputBuffer[i] = 0;
 
-            int height = t->height;
-            int width = t->width;
-
-            for (int i = 1; i < height - 1; ++i) {
-              for (int j = 1; j < width - 1; ++j) {
+            for (int i = 1; i < t->height - 1; ++i)
+              for (int j = 1; j < t->width - 1; ++j) {
                 float GX = 0, GY = 0;
-                for (int x = 0; x < 3; ++x) {
+                for (int x = 0; x < 3; ++x)
                   for (int y = 0; y < 3; ++y) {
                     float pixel = t->inputBuffer[(i + x - 1) * width + (j + y - 1)];
                     int kernelIndex = x * 3 + y;
                     GX += pixel * gx[kernelIndex];
                     GY += pixel * gy[kernelIndex];
                   }
-                }
                 t->outputBuffer[i * width + j] = std::sqrt(GX * GX + GY * GY);
               }
-            }
-
-            for (int j = 0; j < width; ++j) {
-              t->outputBuffer[j] = 0;
-              t->outputBuffer[(height - 1) * width + j] = 0;
-            }
-
-            for (int i = 0; i < height; ++i) {
-              t->outputBuffer[i * width] = 0;
-              t->outputBuffer[i * width + (width - 1)] = 0;
-            }
       }
       }
    }
@@ -505,6 +502,8 @@ scatterAllTiles(int myrank, vector < vector < Tile2D > > & tileArray, float *s, 
             // receive a tile's buffer 
             t->inputBuffer.resize(t->width*t->height);
             t->outputBuffer.resize(t->width*t->height);
+            for (int i = 0; i < t->inputBuffer.size(); i++) t->inputBuffer[i] = 0;
+            for (int i = 0; i < t->outputBuffer.size(); i++) t->outputBuffer[i] = 0;
 #if DEBUG_TRACE
             printf("scatterAllTiles() receive side:: t->tileRank=%d, myrank=%d, t->inputBuffer->size()=%d, t->outputBuffersize()=%d \n", t->tileRank, myrank, t->inputBuffer.size(), t->outputBuffer.size());
 #endif
@@ -531,14 +530,15 @@ scatterAllTiles(int myrank, vector < vector < Tile2D > > & tileArray, float *s, 
             {
                t->inputBuffer.resize(t->width*t->height);
                t->outputBuffer.resize(t->width*t->height);
+               for (int i = 0; i < t->inputBuffer.size(); i++) t->inputBuffer[i] = 0;
+               for (int i = 0; i < t->outputBuffer.size(); i++) t->outputBuffer[i] = 0;
 
                off_t s_offset=0, d_offset=0;
                float *d = t->inputBuffer.data();
 
-               for (int j=0;j<t->height;j++, s_offset+=global_width, d_offset+=t->width)
-               {
-                  memcpy((void *)(d+d_offset), (void *)(s+s_offset), sizeof(float)*t->width);
-               }
+              for (int j = 0; j < t->height; ++j, s_offset += global_width, d_offset += t->width)
+                for (int i = 0; i < t->width; ++i)
+                    d[d_offset + i] += s[s_offset + i];
             }
          }
       }

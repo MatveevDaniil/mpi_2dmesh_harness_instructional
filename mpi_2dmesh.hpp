@@ -101,6 +101,15 @@ class Tile2D
       // printf("Creating a Tile2D at (%d, %d) of size (%d, %d) for rank %d \n", xloc, yloc, width, height, tileRank);
    }
 
+   // apply ghost cell updates to the tile's input buffer
+   void applyGhostCellUpdates()
+   {
+      xloc -= ghost_xmin;
+      yloc -= ghost_ymin;
+      width += ghost_xmin + ghost_xmax;
+      height += ghost_ymin + ghost_ymax;
+   }
+
    void print(int row, int col)
    {
       printf(" Tile at [%d, %d], \tx/yloc: (%d, %d),\tbase grid size [%d,%d],\trank=%d,\tgxmin/gxmax/gymin/gymax=[%d,%d,%d,%d],\tinputBuffer.size()=%d, outputBuffer.size()=%d \n", row, col, xloc, yloc, width, height, tileRank, ghost_xmin, ghost_xmax, ghost_ymin, ghost_ymax, inputBuffer.size(), outputBuffer.size());
