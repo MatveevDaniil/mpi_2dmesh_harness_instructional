@@ -230,7 +230,7 @@ computeMeshDecomposition(AppState *as, vector < vector < Tile2D > > *tileArray) 
 
 void
 write_output_labels(AppState as,
-		    vector < vector < Tile2D > >tileArray)
+        vector < vector < Tile2D > >tileArray)
 {
    // create a buffer of ints, we will set buf[i,j] to be a value
    // in the range 0..nranks-1 to reflect which rank is owner of
@@ -376,17 +376,17 @@ sendStridedBuffer(float *srcBuf,
       int sendWidth, int sendHeight, 
       int fromRank, int toRank ) 
 {
-   int msgTag = 0;
+    int msgTag = 0;
 
-   //
-   // ADD YOUR CODE HERE
-   // That performs sending of  data using MPI_Send(), going "fromRank" and to "toRank". The
-   // data to be sent is in srcBuf, which has width srcWidth, srcHeight.
-   // Your code needs to send a subregion of srcBuf, where the subregion is of size
-   // sendWidth by sendHeight values, and the subregion is offset from the origin of
-   // srcBuf by the values specificed by srcOffsetColumn, srcOffsetRow.
-   //
+    std::vector<float> tempBuf(sendWidth * sendHeight);
 
+    for (int row = 0; row < sendHeight; ++row) {
+        std::memcpy(&tempBuf[row * sendWidth], 
+                    &srcBuf[(srcOffsetRow + row) * srcWidth + srcOffsetColumn],
+                    sendWidth * sizeof(float));
+    }
+
+    MPI_Send(tempBuf.data(), sendWidth * sendHeight, MPI_FLOAT, toRank, msgTag, MPI_COMM_WORLD);
 }
 
 void
@@ -396,18 +396,18 @@ recvStridedBuffer(float *dstBuf,
       int expectedWidth, int expectedHeight, 
       int fromRank, int toRank ) {
 
-   int msgTag = 0;
-   int recvSize[2];
-   MPI_Status stat;
+    int msgTag = 0;
+    int recvSize[2];
+    MPI_Status stat;
 
-   //
-   // ADD YOUR CODE HERE
-   // That performs receiving of data using MPI_Recv(), coming "fromRank" and destined for
-   // "toRank". The size of the data that arrives will be of size expectedWidth by expectedHeight 
-   // values. This incoming data is to be placed into the subregion of dstBuf that has an origin
-   // at dstOffsetColumn, dstOffsetRow, and that is expectedWidth, expectedHeight in size.
-   //
 
+    std::vector<float> tempBuf(expectedWidth * expectedHeight);
+    MPI_Recv(tempBuf.data(), expectedWidth * expectedHeight, MPI_FLOAT, fromRank, msgTag, MPI_COMM_WORLD, &stat);
+    for (int row = 0; row < expectedHeight; ++row) {
+        std::memcpy(&dstBuf[(dstOffsetRow + row) * dstWidth + dstOffsetColumn],
+                    &tempBuf[row * expectedWidth],
+                    expectedWidth * sizeof(float));
+    }
 }
 
 
@@ -420,6 +420,19 @@ recvStridedBuffer(float *dstBuf,
 
 void
 sobelAllTiles(int myrank, vector < vector < Tile2D > > & tileArray) {
+
+    const float gx[9] = {
+        -1, 0, 1,
+        -2, 0, 2,
+        -1, 0, 1
+    };
+
+    const float gy[9] = {
+        -1, -2, -1,
+         0,  0,  0,
+         1,  2,  1
+    };
+
    for (int row=0;row<tileArray.size(); row++)
    {
       for (int col=0; col<tileArray[row].size(); col++)
@@ -437,9 +450,36 @@ sobelAllTiles(int myrank, vector < vector < Tile2D > > & tileArray) {
             // v2. copy the input to the output, umodified
          //   std::copy(t->inputBuffer.begin(), t->inputBuffer.end(), t->outputBuffer.begin());
 #endif
-         // ADD YOUR CODE HERE
-         // to call your sobel filtering code on each tile
-         }
+            t->outputBuffer.resize(t->inputBuffer.size());
+
+            int height = t->tileHeight;
+            int width = t->tileWidth;
+
+            for (int i = 1; i < height - 1; ++i) {
+              for (int j = 1; j < width - 1; ++j) {
+                float GX = 0, GY = 0;
+                for (int x = 0; x < 3; ++x) {
+                  for (int y = 0; y < 3; ++y) {
+                    float pixel = t->inputBuffer[(i + x - 1) * width + (j + y - 1)];
+                    int kernelIndex = x * 3 + y;
+                    GX += pixel * gx[kernelIndex];
+                    GY += pixel * gy[kernelIndex];
+                  }
+                }
+                t->outputBuffer[i * width + j] = std::sqrt(GX * GX + GY * GY);
+              }
+            }
+
+            for (int j = 0; j < width; ++j) {
+              t->outputBuffer[j] = 0;
+              t->outputBuffer[(height - 1) * width + j] = 0;
+            }
+
+            for (int i = 0; i < height; ++i) {
+              t->outputBuffer[i * width] = 0;
+              t->outputBuffer[i * width + (width - 1)] = 0;
+            }
+      }
       }
    }
 }
@@ -693,3 +733,4 @@ int main(int ac, char *av[]) {
    return 0;
 }
 // EOF
+
