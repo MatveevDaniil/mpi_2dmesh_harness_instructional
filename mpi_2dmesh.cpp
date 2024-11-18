@@ -37,6 +37,7 @@
 #include <algorithm>
 #include <omp.h>
 #include <chrono>
+#include <cstring>
 
 #include "mpi_2dmesh.hpp"  // for AppState and Tile2D class
 
@@ -452,8 +453,8 @@ sobelAllTiles(int myrank, vector < vector < Tile2D > > & tileArray) {
 #endif
             t->outputBuffer.resize(t->inputBuffer.size());
 
-            int height = t->tileHeight;
-            int width = t->tileWidth;
+            int height = t->height;
+            int width = t->width;
 
             for (int i = 1; i < height - 1; ++i) {
               for (int j = 1; j < width - 1; ++j) {
