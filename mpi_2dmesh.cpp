@@ -470,12 +470,12 @@ sobelAllTiles(int myrank, vector < vector < Tile2D > > & tileArray) {
                 float GX = 0, GY = 0;
                 for (int x = 0; x < 3; ++x)
                   for (int y = 0; y < 3; ++y) {
-                    float pixel = t->inputBuffer[(i + x - 1) * width + (j + y - 1)];
+                    float pixel = t->inputBuffer[(i + x - 1) * t->width + (j + y - 1)];
                     int kernelIndex = x * 3 + y;
                     GX += pixel * gx[kernelIndex];
                     GY += pixel * gy[kernelIndex];
                   }
-                t->outputBuffer[i * width + j] = std::sqrt(GX * GX + GY * GY);
+                t->outputBuffer[i * t->width + j] = std::sqrt(GX * GX + GY * GY);
               }
       }
       }
