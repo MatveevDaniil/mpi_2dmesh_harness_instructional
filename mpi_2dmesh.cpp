@@ -153,8 +153,8 @@ computeMeshDecomposition(AppState *as, vector < vector < Tile2D > > *tileArray) 
          Tile2D t = Tile2D(0, ylocs[i], width, height, i);
          t.ghost_xmin = 0;
          t.ghost_xmax = 0;
-         t.ghost_ymin = (i == 0) ? 0 : 1;
-         t.ghost_ymax = (i == ytiles - 1) ? 0 : 1;
+         t.ghost_ymin = 0;#(i == 0) ? 0 : 1;
+         t.ghost_ymax = 0;#(i == ytiles - 1) ? 0 : 1;
          t.applyGhostCellUpdates();
          tiles.push_back(t);
          tileArray->push_back(tiles);
@@ -630,7 +630,7 @@ int main(int ac, char *av[]) {
    char hostname[256];
    gethostname(hostname, sizeof(hostname));
 
-   printf("Hello world, I'm rank %d of %d total ranks running on <%s>\n", as.myrank, as.nranks, hostname);
+  //  printf("Hello world, I'm rank %d of %d total ranks running on <%s>\n", as.myrank, as.nranks, hostname);
    MPI_Barrier(MPI_COMM_WORLD);
 
 #if DEBUG_TRACE
