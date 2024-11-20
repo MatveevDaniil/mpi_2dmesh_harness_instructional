@@ -433,15 +433,15 @@ void
 sobelAllTiles(int myrank, vector < vector < Tile2D > > & tileArray) {
 
     const float gx[9] = {
-        -1, 0, 1,
-        -2, 0, 2,
-        -1, 0, 1
+        1.0, 0.0, -1.0, 
+        2.0, 0.0, -2.0, 
+        1.0, 0.0, -1.0
     };
 
     const float gy[9] = {
-        -1, -2, -1,
-         0,  0,  0,
-         1,  2,  1
+        1.0, 2.0, 1.0, 
+        0.0, 0.0, 0.0, 
+        -1.0, -2.0, -1.0
     };
 
    for (int row=0;row<tileArray.size(); row++)
