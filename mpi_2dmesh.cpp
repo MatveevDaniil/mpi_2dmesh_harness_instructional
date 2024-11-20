@@ -596,7 +596,7 @@ gatherAllTiles(int myrank, vector < vector < Tile2D > > & tileArray, float *d, i
 
                for (int j=0;j<t->height - t->ghost_ymin - t->ghost_ymax;j++, s_offset+=t->width, d_offset+=global_width)
                {
-                  memcpy((void *)(d+d_offset), (void *)(s+s_offset), sizeof(float)*t->width);
+                  memcpy((void *)(d+d_offset), (void *)(s+s_offset), sizeof(float)*t->width - t->ghost_xmin - t->ghost_xmax);
                }
             }
          }
