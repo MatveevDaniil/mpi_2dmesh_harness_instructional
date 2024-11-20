@@ -416,12 +416,13 @@ recvStridedBuffer(float *dstBuf,
 
     std::vector<float> tempBuf(expectedWidth * expectedHeight);
     MPI_Recv(tempBuf.data(), expectedWidth * expectedHeight, MPI_FLOAT, fromRank, msgTag, MPI_COMM_WORLD, &stat);
-    for (int row = 0; row < expectedHeight; ++row) {
+    for (int row = 0; row < expectedHeight; ++row)
         memcpy(
             dstBuf + (dstOffsetRow + row) * dstWidth + dstOffsetColumn,
             tempBuf + row * expectedWidth,
             expectedWidth * sizeof(*tempBuf)
         );
+
 }
 
 
