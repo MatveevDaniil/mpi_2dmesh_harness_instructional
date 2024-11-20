@@ -419,10 +419,9 @@ recvStridedBuffer(float *dstBuf,
     for (int row = 0; row < expectedHeight; ++row)
         memcpy(
             dstBuf + (dstOffsetRow + row) * dstWidth + dstOffsetColumn,
-            tempBuf + row * expectedWidth,
-            expectedWidth * sizeof(*tempBuf)
+            tempBuf.data() + row * expectedWidth,
+            expectedWidth * sizeof(float)
         );
-
 }
 
 
