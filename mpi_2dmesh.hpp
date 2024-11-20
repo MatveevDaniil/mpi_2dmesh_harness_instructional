@@ -110,6 +110,14 @@ class Tile2D
       height += ghost_ymin + ghost_ymax;
    }
 
+   void reverseGhostCellUpdates()
+   {
+      xloc += ghost_xmin;
+      yloc += ghost_ymin;
+      width -= ghost_xmin + ghost_xmax;
+      height -= ghost_ymin + ghost_ymax;
+   }
+
    void print(int row, int col)
    {
       printf(" Tile at [%d, %d], \tx/yloc: (%d, %d),\tbase grid size [%d,%d],\trank=%d,\tgxmin/gxmax/gymin/gymax=[%d,%d,%d,%d],\tinputBuffer.size()=%d, outputBuffer.size()=%d \n", row, col, xloc, yloc, width, height, tileRank, ghost_xmin, ghost_xmax, ghost_ymin, ghost_ymax, inputBuffer.size(), outputBuffer.size());

@@ -571,10 +571,11 @@ gatherAllTiles(int myrank, vector < vector < Tile2D > > & tileArray, float *d, i
 
          if (myrank != 0 && t->tileRank == myrank)
          {
+            t->reverseGhostCellUpdates();
             // send the tile's output buffer to rank 0
             sendStridedBuffer(t->outputBuffer.data(), // ptr to the buffer to send
                t->width, t->height,  // size of the src buffer
-               0, 0, // offset into the send buffer
+               t->ghost_xmin, t->ghost_ymin, // offset into the send buffer
                t->width, t->height,  // size of the buffer to send,
                t->tileRank, 0);   // from rank, to rank
          }
@@ -589,8 +590,9 @@ gatherAllTiles(int myrank, vector < vector < Tile2D > > & tileArray, float *d, i
             }
             else // copy from a tile owned by rank 0 back into the main buffer
             {
+               t->reverseGhostCellUpdates();
                float *s = t->outputBuffer.data();
-               off_t s_offset=0, d_offset=0;
+               off_t s_offset=t->ghost_xmin, d_offset=t->ghost_ymin;
                d_offset = t->yloc * global_width + t->xloc;
 
                for (int j=0;j<t->height;j++, s_offset+=t->width, d_offset+=global_width)
