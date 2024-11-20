@@ -571,12 +571,11 @@ gatherAllTiles(int myrank, vector < vector < Tile2D > > & tileArray, float *d, i
 
          if (myrank != 0 && t->tileRank == myrank)
          {
-            t->reverseGhostCellUpdates();
             // send the tile's output buffer to rank 0
             sendStridedBuffer(t->outputBuffer.data(), // ptr to the buffer to send
                t->width, t->height,  // size of the src buffer
                t->ghost_xmin, t->ghost_ymin, // offset into the send buffer
-               t->width, t->height,  // size of the buffer to send,
+               t->width - t->ghost_xmin - t->ghost_xmax, t->height - t->ghost_ymin - t->ghost_ymax,  // size of the buffer to send,
                t->tileRank, 0);   // from rank, to rank
          }
          else if (myrank == 0)
@@ -584,16 +583,16 @@ gatherAllTiles(int myrank, vector < vector < Tile2D > > & tileArray, float *d, i
             if (t->tileRank != 0) {
                // receive a tile's buffer and copy back into the output buffer d
                recvStridedBuffer(d, global_width, global_height,
-                     t->xloc, t->yloc,  // offset of this tile
-                     t->width, t->height, // how much data coming from this tile
+                     t->xloc + t->ghost_xmin, t->yloc + t->ghost_ymin,  // offset of this tile
+                     t->width - t->ghost_xmin - t->ghost_xmax, t->height - t->ghost_ymin - t->ghost_ymax, // how much data coming from this tile
                      t->tileRank, myrank); 
             }
             else // copy from a tile owned by rank 0 back into the main buffer
             {
-               t->reverseGhostCellUpdates();
                float *s = t->outputBuffer.data();
-               off_t s_offset=t->ghost_xmin, d_offset=t->ghost_ymin;
-               d_offset = t->yloc * global_width + t->xloc;
+               off_t s_offset=0, d_offset=0;
+               s_offset = t->ghost_ymin * t->width + t->ghost_xmin;
+               d_offset = (t->yloc + t->ghost_ymin) * global_width + (t->xloc + t->ghost_xmin);
 
                for (int j=0;j<t->height;j++, s_offset+=t->width, d_offset+=global_width)
                {
