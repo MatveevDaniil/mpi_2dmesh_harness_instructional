@@ -32,9 +32,12 @@ srcImg=srcImg.reshape([rows, cols])
 
 # https://matplotlib.org/stable/tutorials/colors/colormaps.html
 #print(" after reshape, array shapw is" , np.shape(srcImg))
-plt.imshow(srcImg, cmap="gist_ncar");
-#plt.imshow(srcImg, cmap="gray");
-plt.colorbar();
+plt.imshow(srcImg, cmap="gist_ncar")
+# plt.imshow(srcImg, cmap="gray");
+plt.colorbar()
+plt.xticks([])
+plt.yticks([])
+plt.tight_layout()
 plt.show()
 
 # EOF

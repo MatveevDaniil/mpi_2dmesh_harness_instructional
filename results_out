@@ -1,0 +1,158 @@
+ srun -n 4 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 1  
+
+
+Timing results from rank 0: 
+	Scatter time:	42.1845 (ms) 
+	Sobel time:	47.5167 (ms) 
+	Gather time:	30.4041 (ms) 
+ srun -n 4 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 2  
+
+
+Timing results from rank 0: 
+	Scatter time:	40.5469 (ms) 
+	Sobel time:	48.4034 (ms) 
+	Gather time:	31.8554 (ms) 
+ srun -n 4 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 3  
+srun: Step created for StepId=33111914.2
+
+
+Timing results from rank 0: 
+	Scatter time:	40.8308 (ms) 
+	Sobel time:	47.6611 (ms) 
+	Gather time:	31.8996 (ms) 
+ srun -n 9 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 1  
+
+
+Timing results from rank 0: 
+	Scatter time:	33.2968 (ms) 
+	Sobel time:	21.6501 (ms) 
+	Gather time:	25.0407 (ms) 
+ srun -n 9 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 2  
+
+
+Timing results from rank 0: 
+	Scatter time:	42.1561 (ms) 
+	Sobel time:	23.2563 (ms) 
+	Gather time:	31.9283 (ms) 
+ srun -n 9 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 3  
+srun: Step created for StepId=33111914.5
+
+
+Timing results from rank 0: 
+	Scatter time:	41.0987 (ms) 
+	Sobel time:	22.0655 (ms) 
+	Gather time:	26.1204 (ms) 
+ srun -n 25 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 1  
+
+
+Timing results from rank 0: 
+	Scatter time:	30.1348 (ms) 
+	Sobel time:	8.4652 (ms) 
+	Gather time:	24.5632 (ms) 
+ srun -n 25 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 2  
+
+
+Timing results from rank 0: 
+	Scatter time:	31.8363 (ms) 
+	Sobel time:	7.8834 (ms) 
+	Gather time:	31.6200 (ms) 
+ srun -n 25 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 3  
+srun: Step created for StepId=33111914.8
+
+
+Timing results from rank 0: 
+	Scatter time:	31.6408 (ms) 
+	Sobel time:	7.8456 (ms) 
+	Gather time:	25.6832 (ms) 
+ srun -n 36 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 1  
+srun: Step created for StepId=33111914.9
+
+
+Timing results from rank 0: 
+	Scatter time:	27.5774 (ms) 
+	Sobel time:	6.6269 (ms) 
+	Gather time:	25.0394 (ms) 
+ srun -n 36 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 2  
+
+
+Timing results from rank 0: 
+	Scatter time:	30.8282 (ms) 
+	Sobel time:	5.8226 (ms) 
+	Gather time:	30.2910 (ms) 
+ srun -n 36 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 3  
+
+
+Timing results from rank 0: 
+	Scatter time:	31.1468 (ms) 
+	Sobel time:	5.5023 (ms) 
+	Gather time:	25.5231 (ms) 
+ srun -n 49 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 1  
+srun: Step created for StepId=33111914.12
+
+
+Timing results from rank 0: 
+	Scatter time:	30.6670 (ms) 
+	Sobel time:	5.0084 (ms) 
+	Gather time:	26.0611 (ms) 
+ srun -n 49 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 2  
+srun: Step created for StepId=33111914.13
+
+
+Timing results from rank 0: 
+	Scatter time:	35.9552 (ms) 
+	Sobel time:	4.6315 (ms) 
+	Gather time:	32.5772 (ms) 
+ srun -n 49 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 3  
+
+
+Timing results from rank 0: 
+	Scatter time:	32.8677 (ms) 
+	Sobel time:	4.4812 (ms) 
+	Gather time:	27.3979 (ms) 
+ srun -n 64 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 1  
+
+
+Timing results from rank 0: 
+	Scatter time:	29.4877 (ms) 
+	Sobel time:	5.1113 (ms) 
+	Gather time:	26.6588 (ms) 
+ srun -n 64 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 2  
+srun: Step created for StepId=33111914.16
+
+
+Timing results from rank 0: 
+	Scatter time:	36.0439 (ms) 
+	Sobel time:	3.5009 (ms) 
+	Gather time:	32.5358 (ms) 
+ srun -n 64 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 3  
+srun: Step created for StepId=33111914.17
+
+
+Timing results from rank 0: 
+	Scatter time:	32.3736 (ms) 
+	Sobel time:	3.5028 (ms) 
+	Gather time:	26.8251 (ms) 
+ srun -n 81 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 1  
+srun: Step created for StepId=33111914.18
+
+
+Timing results from rank 0: 
+	Scatter time:	30.4163 (ms) 
+	Sobel time:	4.8185 (ms) 
+	Gather time:	25.9111 (ms) 
+ srun -n 81 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 2  
+srun: Step created for StepId=33111914.19
+
+
+Timing results from rank 0: 
+	Scatter time:	36.1400 (ms) 
+	Sobel time:	4.6889 (ms) 
+	Gather time:	33.4440 (ms) 
+ srun -n 81 ./mpi_2dmesh -i ../data/zebra-gray-int8-4x -x 7112 -y 5146 -g 3  
+srun: Step created for StepId=33111914.20
+
+
+Timing results from rank 0: 
+	Scatter time:	33.7081 (ms) 
+	Sobel time:	2.8101 (ms) 
+	Gather time:	27.8997 (ms) 
