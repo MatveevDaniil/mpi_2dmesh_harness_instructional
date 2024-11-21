@@ -37,7 +37,14 @@ scatter2time, sobel2time, gather2time = parse_results(raw_results)
 scatter_speedup = calc_speedup(scatter2time)
 sobel_speedup = calc_speedup(sobel2time)
 gather_speedup = calc_speedup(gather2time)
-
+overal_speedup = {}
+for g in (1, 2, 3):
+  overal_speedup[g] = {}
+  for n in scatter2time[g]:
+    overal_speedup[g][n] = scatter2time[g][n] + sobel2time[g][n] + gather2time[g][n]
+  overal_speedup_4 = overal_speedup[g][4]
+  for n in overal_speedup[g]:
+    overal_speedup[g][n] = overal_speedup_4 / overal_speedup[g][n]
 idx2label = {
   1: 'Row Tiling',
   2: 'Collumn Tiling',
@@ -56,6 +63,9 @@ def plot_speedup(speedup: dict[int, dict[int, float]], title: str):
   plt.savefig(f'scripts/{title}.png', dpi=300)
   plt.close()
 
+
+
 plot_speedup(scatter_speedup, 'Scatter Phase Speedup')
 plot_speedup(sobel_speedup, 'Sobel Kernel Speedup')
 plot_speedup(gather_speedup, 'Gather Phase Speedup')
+plot_speedup(overal_speedup, 'Overall Speedup')
